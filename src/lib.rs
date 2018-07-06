@@ -142,7 +142,7 @@ pub enum JsErrorKind {
 }
 
 #[cfg(all(test, feature = "logging"))]
-pub static mut LAST_LOG_LEVELS: &'static mut [Option<log::LogLevel>; 16] = &mut [None; 16];
+pub static mut LAST_LOG_LEVELS: &'static mut [Option<log::Level>; 16] = &mut [None; 16];
 
 impl Context {
     /// Creates a new context.
@@ -833,15 +833,15 @@ unsafe extern "C" fn log_handler(ctx: *mut duktape_sys::duk_context) -> duktape_
     }
 
     let rust_level = if level == DUK_LOG_TRACE {
-        log::LogLevel::Trace
+        log::Level::Trace
     } else if level == DUK_LOG_DEBUG {
-        log::LogLevel::Debug
+        log::Level::Debug
     } else if level == DUK_LOG_INFO {
-        log::LogLevel::Info
+        log::Level::Info
     } else if level == DUK_LOG_WARN {
-        log::LogLevel::Warn
+        log::Level::Warn
     } else {
-        log::LogLevel::Error
+        log::Level::Error
     };
 
     duk_get_prop_string(ctx, -2, nul_str(b"n\0"));
@@ -900,7 +900,7 @@ unsafe extern "C" fn log_handler(ctx: *mut duktape_sys::duk_context) -> duktape_
 }
 
 #[cfg(all(test, feature = "logging"))]
-fn stash_log(level: log::LogLevel, msg: &str) {
+fn stash_log(level: log::Level, msg: &str) {
     println!("Logged: {} {}", level, msg);
     unsafe {
         for l in LAST_LOG_LEVELS.iter_mut() {
@@ -913,7 +913,7 @@ fn stash_log(level: log::LogLevel, msg: &str) {
 }
 
 #[cfg(all(not(test), feature = "logging"))]
-fn stash_log(_: log::LogLevel, _: &str) {
+fn stash_log(_: log::Level, _: &str) {
     // No-op
 }
 
@@ -1295,12 +1295,12 @@ mod tests {
         };
 
         assert_eq!(log_levels, vec![
-            Some(log::LogLevel::Trace),
-            Some(log::LogLevel::Debug),
-            Some(log::LogLevel::Info),
-            Some(log::LogLevel::Warn),
-            Some(log::LogLevel::Error),
-            Some(log::LogLevel::Error),
+            Some(log::Level::Trace),
+            Some(log::Level::Debug),
+            Some(log::Level::Info),
+            Some(log::Level::Warn),
+            Some(log::Level::Error),
+            Some(log::Level::Error),
         ]);
     }
 
